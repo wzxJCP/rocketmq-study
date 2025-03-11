@@ -52,8 +52,10 @@ Mq的作用：削峰限流 异步 解耦合
 大致流程
 
 发送者把消息发给消息服务器[MQ]，消息服务器把消息存放在若干**队列主题**中，在合适的时候，消息服务器会把消息转发给接受者。在这个过程中，发送和接受是异步的,也就是发送无需等待，发送者和接受者的生命周期也没有必然关系在发布pub/订阅sub模式下，也可以完成一对多的通信，可以让一个消息有多个接受者[微信订阅号就是这样的]
+图片
+![](D:\2021\RocketMQ\rocketmq-study\img\1.png)
 
-### 2.2特点
+### 2.2 特点
 
 #### 2.2.1 异步处理模式
 
@@ -64,6 +66,8 @@ Mq的作用：削峰限流 异步 解耦合
 案例：
 
 也就是说，一个系统和另一个系统间进行通信的时候，假如系统A希望发送一个消息给系统B，让它去处理，但是系统A不关注系统B到底怎么处理或者有没有处理好，所以系统A把消息发送给MQ，然后就不管这条消息的“死活” 了，接着系统B从MQ里面消费出来处理即可。至于怎么处理，是否处理完毕，什么时候处理，都是系统B的事，与系统A无关。
+图片
+![](D:\2021\RocketMQ\rocketmq-study\img\2.png)
 
 这样的一种通信方式，就是所谓的“异步”通信方式，对于系统A来说，只要把消息发给MQ,然后系统B就会异步处去进行处理了，系统A不能“同步”的等待系统B处理完。这样的好处是什么呢？解耦
 
@@ -75,191 +79,153 @@ Mq的作用：削峰限流 异步 解耦合
 
 #### 2.2.3 现实中的业务
 
+流程图
+![](D:\2021\RocketMQ\rocketmq-study\img\3.png)
+
 ## 3.各个MQ产品的比较
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps5.jpg)  
+图片
+![img](D:\2021\RocketMQ\rocketmq-study\img\4.png)  
 
 ## 4.RocketMQ重要概念【重点】
 
+```tex
 Producer：消息的发送者，生产者；举例：发件人；
-
 Consumer：消息接收者，消费者；举例：收件人；
-
 Broker：中间人，暂存和传输消息的通道；举例：快递；
-
 NameServer：管理Broker；举例：各个快递公司的管理机构相当于broker的注册中心，保留了broker的信息；
-
 Queue：队列，消息存放的位置，一个Broker中可以有多个队列；
-
 Topic：主题，消息的分类；
-
 ProducerGroup：生产者组 ；
-
 ConsumerGroup：消费者组，多个消费者组可以同时消费一个主题的消息；
+```
 
 消息发送的流程是，Producer询问NameServer，NameServer分配一个broker 然后Consumer也要询问NameServer，得到一个具体的broker，然后消费消息。
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps6.jpg) 
+图片
+ ![img](D:\2021\RocketMQ\rocketmq-study\img\5.png)
 
 ## 5.生产和消费理解【重点】
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps7.jpg) 
+图片
+![img](D:\2021\RocketMQ\rocketmq-study\img\6.png)
 
 ## 6.RocketMQ安装
 
-了解了mq的基本概念和角色以后，我们开始安装rocketmq，建议在linux上
+了解了mq的基本概念和角色以后，我们开始安装rocketmq，建议在linux上。
 
 ### 6.1下载RocketMQ
 
 下载地址：https://rocketmq.apache.org/dowloading/releases/ 
 
-注意选择版本，这里我们选择4.9.2的版本，后面使用alibaba时对应
+注意选择版本，这里我们选择4.9.2的版本，后面使用alibaba时对应。
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps8.jpg) 
-
-下载地址：
-
-https://archive.apache.org/dist/rocketmq/4.9.2/rocketmq-all-4.9.2-bin-release.zip 
+下载地址：https://archive.apache.org/dist/rocketmq/4.9.2/rocketmq-all-4.9.2-bin-release.zip 
 
 ### 6.2 上传服务器
 
-在root目录下创建文件夹
+在root目录下创建文件夹`mkdir rocketmq`，将下载后的压缩包上传到阿里云服务器或者虚拟机中。
 
-mkdir rocketmq
+### 6.3 解压
 
-将下载后的压缩包上传到阿里云服务器或者虚拟机中去
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps9.jpg) 
-
-### 6.3 **解压**
-
-unzip rocketmq-all-4.9.2-bin-release.zip
-
-如果你的服务器没有unzip命令，则下载安装一个
-
-yum install unzip
+unzip rocketmq-all-4.9.2-bin-release.zip；如果你的服务器没有unzip命令，则下载安装一个`yum install unzip`。
 
 目录分析
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps10.jpg) 
-
+```tex
 Benchmark：包含一些性能测试的脚本；
-
 Bin：可执行文件目录；
-
 Conf：配置文件目录；
-
 Lib：第三方依赖；
-
 LICENSE：授权信息;
-
 NOTICE：版本公告；
+```
 
-### 6.4 **配置环境变量**
+### 6.4 配置环境变量
 
-vim /etc/profile
+vim /etc/profile，在文件末尾添加，
 
-在文件末尾添加
+export NAMESRV_ADDR=**阿里云公网IP**:9876；
 
-export NAMESRV_ADDR=**阿里云公网IP**:9876
+export NAMESRV_ADDR=116.205.174.114:9876。
 
-export NAMESRV_ADDR=116.205.174.114:9876
+### 6.5 修改nameServer的运行脚本
 
-### 6.5 **修改nameServer的运行脚本**
+进入bin目录下，修改runserver.sh文件,将71行和76行的Xms和Xmx等改小一点。
 
-进入bin目录下，修改runserver.sh文件,将71行和76行的Xms和Xmx等改小一点
+vim runserver.sh：修改-server 256 256 128 128 320m；保存退出。
 
-vim runserver.sh
+### 6.6 修改broker的运行脚本
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps11.jpg) 
+进入bin目录下，修改runbroker.sh文件，修改67行，-server 256 256m；保存退出。
 
-保存退出
-
-### 6.6 **修改broker的运行脚本**
-
-进入bin目录下，修改runbroker.sh文件,修改67行
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps12.jpg) 
-
-保存退出
-
-### 6.7 **修改broker的配置文件**
+### 6.7 修改broker的配置文件
 
 进入conf目录下，修改broker.conf文件
-
-brokerClusterName = DefaultClusterbrokerName = broker-abrokerId = 0deleteWhen = 04fileReservedTime = 48brokerRole = ASYNC_MASTERflushDiskType = ASYNC_FLUSH***\*namesrvAddr=localhost:9876\*******\*autoCreateTopicEnable=true\*******\*brokerIP1=\*******\*阿里云公网IP\****
-
-***\*添加参数解释\****
-
-***\*namesrvAddr\*******\*：nameSrv地址 可以写localhost因为nameSrv和broker在一个服务器\****
-
-***\*autoCreateTopicEnable\*******\*：自动创建主题，不然需要手动创建出来\****
-
-***\*br\*******\*okerIP1\*******\*：broker也需要一个公网ip，如果不指定，那么是阿里云的内网地址，我们再本地无法连接使用\****、
-
-namesrvAddr=localhost:9876
+```shell
+brokerClusterName=DefaultCluster
+brokerName=broker-a
+# 0 表示 Master，> 0 表示 Slave
+brokerId=0
+# nameServer地址，分号分割http://116.205.174.114:9999/
+namesrvAddr=116.205.174.114:9876
+# 启动IP,如果 docker 报 com.alibaba.rocketmq.remoting.exception.RemotingConnectException: connect to <192.168.0.120:10909> failed
+# 解决方式1 加上一句 producer.setVipChannelEnabled(false);，解决方式2 brokerIP1 设置宿主机IP，不要使用docker 内部IP
+#producer.setVipChannelEnabled=false
+brokerIP1=116.205.174.114
+# 在发送消息时，自动创建服务器不存在的topic，默认创建的队列数
+defaultTopicQueueNums=4
+# 是否允许 Broker 自动创建 Topic，建议线下开启，线上关闭 ！！！这里仔细看是 false，false，false
 autoCreateTopicEnable=true
-brokerIP1=47.106.182.45
+# 是否允许 Broker 自动创建订阅组，建议线下开启，线上关闭
+autoCreateSubscriptionGroup=true
+# Broker 对外服务的监听端口
+listenPort=10911
+# 删除文件时间点，默认凌晨4点
+deleteWhen=04
+# 文件保留时间，默认48小时
+fileReservedTime=120
+# commitLog 每个文件的大小默认1G
+mapedFileSizeCommitLog=1073741824
+# ConsumeQueue 每个文件默认存 30W 条，根据业务情况调整
+mapedFileSizeConsumeQueue=300000
+# destroyMapedFileIntervalForcibly=120000
+# redeleteHangedFileInterval=120000
+# 检测物理文件磁盘空间
+diskMaxUsedSpaceRatio=88
+# 存储路径
+maxMessageSize=65536
+brokerRole=ASYNC_MASTER
+# 刷盘方式
+# - ASYNC_FLUSH 异步刷盘
+# - SYNC_FLUSH 同步刷盘
+flushDiskType=ASYNC_FLUSH
+```
 
-### 6.8 **启动**
+### 6.8 启动
 
-首先在安装目录下创建一个logs文件夹，用于存放日志
+首先在安装目录下创建一个logs文件夹，用于存放日志 mkdir logs；一次运行两条命令；启动nameSrv；
 
-mkdir logs
+nohup sh bin/mqnamesrv > ./logs/namesrv.log &；启动broker 这里的-c是指定使用的配置文件；
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps13.jpg) 
+nohup sh bin/mqbroker -c conf/broker.conf > ./logs/broker.log &；
 
-一次运行两条命令
+查看启动结果：BrokerStartup 和 NamesrvStartup 启动成功。
 
-启动nameSrv
+### 6.9 RocketMQ控制台的安装RocketMQ-Console
 
-nohup sh bin/mqnamesrv > ./logs/namesrv.log &
+Rocketmq 控制台可以可视化MQ的消息发送！旧版本源码是在rocketmq-external里的rocketmq-console，新版本已经单独拆分成dashboard。
 
-启动broker 这里的-c是指定使用的配置文件
+网址： https://github.com/apache/rocketmq-dashboard ；
 
-nohup sh bin/mqbroker -c conf/broker.conf > ./logs/broker.log &
+下载地址：https://github.com/apache/rocketmq-dashboard/archive/refs/tags/rocketmq-dashboard-1.0.0.zip ；
 
-查看启动结果
+下载后解压出来，在跟目录下执行：mvn clean package -Dmaven.test.skip=true ；
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps14.jpg) 
+将jar包上传到服务器上去：然后运行 nohup java -jar ./rocketmq-dashboard-1.0.0.jar rocketmq.config.namesrvAddr=127.0.0.1:9876 > ./rocketmq-4.9.3/logs/dashboard.log &；
 
-### 6.9 **RocketMQ控制台的安装RocketMQ-Console**
+命令拓展:--server.port指定运行的端口；--rocketmq.config.namesrvAddr=127.0.0.1:9876 指定namesrv地址；
 
-Rocketmq 控制台可以可视化MQ的消息发送！
-
-旧版本源码是在rocketmq-external里的rocketmq-console，新版本已经单独拆分成dashboard
-
-网址： https://github.com/apache/rocketmq-dashboard 
-
-下载地址：
-
-https://github.com/apache/rocketmq-dashboard/archive/refs/tags/rocketmq-dashboard-1.0.0.zip 
-
-下载后解压出来，在跟目录下执行
-
-mvn clean package -Dmaven.test.skip=true
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps15.jpg) 
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps16.jpg) 
-
-将jar包上传到服务器上去
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps17.jpg) 
-
-然后运行
-
-nohup java -jar ./rocketmq-dashboard-1.0.0.jar rocketmq.config.namesrvAddr=127.0.0.1:9876 > ./rocketmq-4.9.3/logs/dashboard.log &
-
-命令拓展:--server.port指定运行的端口
-
---rocketmq.config.namesrvAddr=127.0.0.1:9876 指定namesrv地址
-
-访问：  [http://localhost:8001](http://localhost:8081) 
-
-运行访问端口是8001，如果从官网拉下来打包的话，默认端口是8080
-
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps18.jpg)                                                                                                                                                                                                         
+访问：http://ip:8001 ；运行访问端口是8001，如果从官网拉下来打包的话，默认端口是8080。                                                                                                                                                                                     
 
 ## 7.RocketMQ安装之docker
 
@@ -299,17 +265,15 @@ docker run -d  --name rmqbroker --link rmqnamesrv:namesrv -p 10911:10911 -p 1090
 
 docker run -d --name rmqadmin -e "JAVA_OPTS=-Drocketmq.namesrv.addr=**你的外网地址**:9876 \-Dcom.rocketmq.sendMessageWithVIPChannel=false \-Duser.timezone='Asia/Shanghai'" -v /etc/localtime:/etc/localtime -p 9999:8080 styletang/rocketmq-console-ng
 
-### 7.5 正常启动后的docker ps
+### 7.5 正常启动后的
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps19.jpg) 
+docker ps 
 
 ### 7.6 访问控制台
 
-http://你的服务器外网ip:9999/
+http://你的服务器外网ip:9999/ 
 
-![img](file:///C:\Users\13629\AppData\Local\Temp\ksohtml24324\wps20.jpg) 
-
-## 7.RocketMQ安装之docker(当前使用)
+## 7.RocketMQ安装之docker【当前使用】
 
 在Docker环境下安装RocketMQ以及RocketMQ-Console仪表板可视化界面
 
@@ -518,7 +482,7 @@ http://116.205.174.114:9999/#/cluster
 
 ## 8.RocketMQ快速入门
 
-RocketMQ提供了发送多种发送消息的模式，例如同步消息，异步消息，顺序消息，延迟消息，事务消息等，我们一一学习
+RocketMQ提供了发送多种发送消息的模式，例如同步消息，异步消息，顺序消息，延迟消息，事务消息等。
 
 ### 8.1 消息发送和监听的流程
 
@@ -526,51 +490,141 @@ RocketMQ提供了发送多种发送消息的模式，例如同步消息，异步
 
 #### 8.1.1 消息生产者
 
+```tex
 1.创建消息生产者producer，并制定生产者组名；
-
 2.指定Nameserver地址；
-
 3.启动producer；
-
 4.创建消息对象，指定主题Topic、Tag和消息体等；
-
 5.发送消息；
-
 6.关闭生产者producer。
+```
 
 #### 8.1.2 消息消费者
 
-1.创建消费者consumer，制定消费者组名2.指定Nameserver地址3.创建监听订阅主题Topic和Tag等4.处理消息5.启动消费者consumer
+```tex
+1.创建消费者consumer，制定消费者组名
+2.指定Nameserver地址；；
+3.创建监听订阅主题Topic和Tag等；
+4.处理消息；
+5.启动消费者consumer。
+```
 
 ### 8.2 搭建Rocketmq-demo
 
 #### 8.2.1 加入依赖
 
-<dependencies>  <dependency>    <groupId>org.apache.rocketmq</groupId>    <artifactId>rocketmq-client</artifactId>    <version>4.9.2</version>    <!--docker的用下面这个版本--><version>4.4.0</version>  </dependency>  <dependency>    <groupId>junit</groupId>    <artifactId>junit</artifactId>    <version>4.12</version>  </dependency>  <dependency>    <groupId>org.projectlombok</groupId>    <artifactId>lombok</artifactId>    <version>1.18.22</version>  </dependency></dependencies> 
+```xml
+		<dependency>
+			<groupId>org.apache.rocketmq</groupId>
+			<artifactId>rocketmq-client</artifactId>
+			<version>5.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.36</version>
+			<optional>true</optional>
+		</dependency>
+```
 
-#### 8.2.2 编写生产者
+#### 8.2.2 编写生产者 和 消费者
 
-**/**** ***** **测试生产者** ***** *** @throws** **Exception** ***/**@Testpublic void testProducer() throws Exception {  **//** **创建默认的生产者**  DefaultMQProducer producer = new DefaultMQProducer("test-group");  **//** **设置****nameServer****地址**  producer.setNamesrvAddr("localhost:9876");  **//** **启动实例**  producer.start();  for (int i = 0; i < 10; i++) {    **//** **创建消息**    **//** **第一个参数：主题的名字**    **//** **第二个参数：消息内容**    Message msg = new Message("TopicTest", ("Hello RocketMQ " + i).getBytes());    SendResult send = producer.send(msg);    System.**out**.println(send);  }  **//** **关闭实例**  producer.shutdown();}
+```java
+package com.powernode.demo;
 
-#### 8.2.3 编写消费者
+import com.powernode.constant.MqConstant;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageExt;
+import org.junit.Test;
 
-  **/****   ***** **测试消费者**   *****   *** @throws** **Exception**   ***/**  @Test  public void testConsumer() throws Exception {    **//** **创建默认消费者组**    DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer-group");    **//** **设置****nameServer****地址**    consumer.setNamesrvAddr("localhost:9876");    **//** **订阅一个主题来消费**  *******表示没有过滤参数 表示这个主题的任何消息**    consumer.subscribe("TopicTest", "*");    **//** **注册一个消费监听** **MessageListenerConcurrently 是多线程消费，默认20个线程，可以参看consumer.setConsumeThreadMax()**    consumer.registerMessageListener(new MessageListenerConcurrently() {      @Override      public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,                              ConsumeConcurrentlyContext context) {        System.**out**.println(Thread.**currentThread**().getName() + "----" + msgs);        **//** **返回消费的状态 如果是****CONSUME_SUCCESS** **则成功，若为****RECONSUME_LATER****则该条消息会被重回队列，重新被投递**        **//** **重试的时间为****messageDelayLevel = "1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h**        **//** **也就是第一次****1s** **第二次****5s** **第三次****10s  ....**  **如果重试了****18****次 那么这个消息就会被终止发送给消费者****//         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;**        return ConsumeConcurrentlyStatus.**RECONSUME_LATER**;      }    });    **//** **这个****start****一定要写在****registerMessageListener****下面**    consumer.start();    System.**in**.read();  }
+import java.util.List;
 
-#### 8.2.4 测试
+/**
+ * @since：2025/3/6 16:13
+ * @author：wzx
+ */
+public class ASimpleTest {
+    @Test
+    public void simpleProducer() throws Exception {
+        // 创建一个生产者（指定一个组名）
+        DefaultMQProducer producer = new DefaultMQProducer("repeat-producer-group");
+        // 连接namesrv
+        producer.setNamesrvAddr(MqConstant.NAME_SRV_ADDR);
+        // 启动
+        producer.start();
+        // 创建一个消息
+        Message message = new Message("testTopic", "我是一个简单的消息".getBytes());
+        // 发送消息
+        SendResult sendResult = producer.send(message);
+        System.out.println(sendResult.getMessageQueue());
+        // 关闭生产者
+        producer.shutdown();
+    }
+
+    // 消费者
+    @Test
+    public void simpleConsumer() throws Exception {
+        // 创建一个消费者
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("test-consumer-group");
+        // 连接namesrv
+        consumer.setNamesrvAddr(MqConstant.NAME_SRV_ADDR);
+        // 订阅一个主题  * 标识订阅这个主题中所有的消息  后期会有消息过滤
+        consumer.subscribe("testTopic", "*");
+        // 设置一个监听器 (一直监听的， 异步回调方式)
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                // 这个就是消费的方法 （业务处理）
+                System.out.println("我是消费者");
+                System.out.println(msgs.get(0).toString());
+                System.out.println("消息内容:" + new String(msgs.get(0).getBody()));
+                System.out.println("消费上下文:" + context);
+                // 返回值  CONSUME_SUCCESS成功，消息会从mq出队
+                // RECONSUME_LATER（报错/null） 失败 消息会重新回到队列 过一会重新投递出来 给当前消费者或者其他消费者消费的
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+        // 启动
+        consumer.start();
+        // 挂起当前的jvm
+        System.in.read();
+    }
+}
+```
+
+#### 8.2.3 测试
+
+http://116.205.174.114:9999/#/topic
+http://116.205.174.114:9999/#/consumer
 
 启动生产者和消费者进行测试。
 
-# 9. **消费模式**
+## 9. 消费模式
 
-MQ的消费模式可以大致分为两种，一种是推Push，一种是拉Pull。
+MQ的消费模式可以大致分为两种，一种是推Push，一种是拉Pull；
 
-Push是服务端【MQ】主动推送消息给客户端，优点是及时性较好，但如果客户端没有做好流控，一旦服务端推送大量消息到客户端时，就会导致客户端消息堆积甚至崩溃。
+Push是服务端【MQ】主动推送消息给客户端，优点是及时性较好，但如果客户端没有做好流控，一旦服务端推送大量消息到客户端时，就会导致客户端消息堆积甚至崩溃；
 
-Pull是客户端需要主动到服务端取数据，优点是客户端可以依据自己的消费能力进行消费，但拉取的频率也需要用户自己控制，拉取频繁容易造成服务端和客户端的压力，拉取间隔长又容易造成消费不及时。
+Pull是客户端需要主动到服务端取数据，优点是客户端可以依据自己的消费能力进行消费，但拉取的频率也需要用户自己控制，拉取频繁容易造成服务端和客户端的压力，拉取间隔长又容易造成消费不及时；
 
-Push模式也是基于pull模式的，只能客户端内部封装了api，一般场景下，上游消息生产量小或者均速的时候，选择push模式。在特殊场景下，例如电商大促，抢优惠券等场景可以选择pull模式
+Push模式也是基于pull模式的，只能客户端内部封装了api，一般场景下，上游消息生产量小或者均速的时候，选择push模式。在特殊场景下，例如电商大促，抢优惠券等场景可以选择pull模式。
 
-# 10.RocketMQ发送同步消息
+## 10.RocketMQ发送同步消息
 
 上面的快速入门就是发送同步消息，发送过后会有一个返回值，也就是mq服务器接收到消息后返回的一个确认，这种方式非常安全，但是性能上并没有这么高，而且在mq集群中，也是要等到所有的从机都复制了消息以后才会返回，所以针对重要的消息可以选择这种方式
 
@@ -1194,7 +1248,7 @@ enableMsgTrace = true
 
 
 
-## 99+ （1/18）03（00:00）
+## 99+ （1/18）04（00:00）
 
  
 
